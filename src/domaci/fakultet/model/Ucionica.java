@@ -4,6 +4,7 @@ package domaci.fakultet.model;
 import anotacije.definicije.Autowired;
 import anotacije.definicije.ClassInfo;
 import anotacije.definicije.Component;
+import anotacije.definicije.Qualifier;
 import domaci.DIEngine;
 import domaci.fakultet.interfejsi.Student;
 
@@ -12,6 +13,7 @@ import java.util.Arrays;
 
 @Component
 @ClassInfo(author = "RAF", version = "1.0")
+@Qualifier("Ucionica")
 public class Ucionica {
 
     String sifra = "RAF3";
