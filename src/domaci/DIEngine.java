@@ -1,8 +1,5 @@
 package domaci;
-import anotacije.definicije.Autowired;
-import anotacije.definicije.ClassInfo;
-import anotacije.definicije.Qualifier;
-import anotacije.definicije.Service;
+import anotacije.definicije.*;
 import com.sun.org.apache.bcel.internal.util.ClassPath;
 import domaci.fakultet.model.DrugaGodina;
 import domaci.fakultet.model.Ucionica;
@@ -143,6 +140,7 @@ public class DIEngine {
                 }
             }else{
 
+
                 if(DSupplier.containsKey(cl.getSimpleName())){
                     cl = Class.forName(DSupplier.get(cl.getSimpleName()));
                 }
@@ -211,16 +209,34 @@ public class DIEngine {
     public void pronadjiDuplikate(){
         try {
             Set<String> files = new HashSet<>();
-            listOfPackage("src/domaci/fakultet",files);
+
+            String[] rootStringArr = {};
+
+            rootStringArr = this.getClass().getCanonicalName().split(".");
+
+            File currentDirFile = new File(".");
+
+            String helper = currentDirFile.getAbsolutePath();
+
+            String currentDir = helper.substring(0, helper.length()-1);
+
+            System.out.println(currentDir);
+
+            listOfPackage(currentDir,files);
 
             ArrayList<Class[]> klase = new ArrayList<>();
+
+            System.out.println(files);
 
             for(String putanja : files){
 
                 for(Class c : getClassesForPackage(putanja)){
-                    if (c.getAnnotation(Qualifier.class) == null) throw new Exception("Nije definisan Qualifier za @Bean ");
+                    if (c.getAnnotation(Qualifier.class) == null && (c.getAnnotation(Service.class) != null || c.getAnnotation(Component.class) != null))
+                        throw new Exception("Nije definisan Qualifier za @Bean " + c.getCanonicalName());
                     if(this.qualifierRegistry.containsKey(c.getSimpleName())){
-                        throw new Exception("Postoji vise @Bean-ova sa @Qualifier-om iste vrednosti\n");
+                        if(this.qualifierRegistry.get(c.getSimpleName()) != c.getCanonicalName())
+
+                            throw new Exception("Postoji vise @Bean-ova sa @Qualifier-om iste vrednosti " + c.getCanonicalName() + this.qualifierRegistry.get(c.getSimpleName()));
                     }else{
                         this.qualifierRegistry.put(c.getSimpleName(), c.getTypeName());
                     }
@@ -233,7 +249,7 @@ public class DIEngine {
         }catch (Exception e){
             e.printStackTrace();
         }
-
+        System.out.println(this.qualifierRegistry);
 
     }
 

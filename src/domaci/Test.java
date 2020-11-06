@@ -20,7 +20,7 @@ public class Test {
 
 
     @Autowired
-    @Qualifier("Student")
+    @Qualifier("DrugaGodina")
     Student nesto;
 
 
